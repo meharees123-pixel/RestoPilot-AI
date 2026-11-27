@@ -1,0 +1,73 @@
+<div class="assistant-shell">
+  <header class="assistant-topbar">
+    <a class="back-link" routerLink="/dashboard"><span>←</span> Workspace</a>
+    <div class="assistant-title"><span class="assistant-logo">✳</span><span><strong>AI Assistant</strong><small>Restaurant operations copilot</small></span></div>
+    <div class="assistant-top-actions"><span class="preview-status"><i></i> PREVIEW MODE</span><button type="button" class="theme-toggle" [attr.aria-label]="theme.dark() ? 'Switch to light mode' : 'Switch to dark mode'" (click)="theme.toggle()">{{ theme.dark() ? '☼' : '◐' }}</button></div>
+  </header>
+
+  <main class="assistant-workspace">
+    <aside class="context-panel">
+      <div class="context-heading"><span class="context-glyph">✳</span><div><strong>Operations Copilot</strong><small>Workspace preview</small></div></div>
+      <div class="context-divider"></div>
+      <span class="context-label">YOUR RESTAURANT</span>
+      <div class="context-restaurant"><span class="context-avatar">R</span><span><b>Restaurant workspace</b><small>Tenant context is protected</small></span></div>
+      <span class="context-label context-space">WHAT YOU CAN ASK</span>
+      <div class="capability-row"><span>▦</span><div><b>Menu operations</b><small>Availability and item updates</small></div></div>
+      <div class="capability-row"><span>▤</span><div><b>Order support</b><small>Order activity and status</small></div></div>
+      <div class="capability-row"><span>◷</span><div><b>Reservations</b><small>Planned for a future release</small></div></div>
+      <div class="context-notice"><span>i</span><p>This preview does not connect to an AI model or change restaurant data.</p></div>
+      <a routerLink="/dashboard" class="return-link">← Back to overview</a>
+    </aside>
+
+    <section class="conversation-area" aria-label="AI assistant conversation">
+      <div class="conversation-header">
+        <div><span class="context-label">YOUR RESTAURANT, PILOTED BY AI</span><h1>What can I help with?</h1><p>Ask in plain language. Your assistant should understand the way your restaurant works.</p></div>
+        @if (messages().length) {
+          <button type="button" class="clear-button" (click)="clearConversation()">New conversation <span>↻</span></button>
+        }
+      </div>
+
+      <div class="conversation-scroll">
+        @if (!messages().length) {
+          <div class="empty-conversation">
+            <div class="empty-assistant-mark"><span>✳</span><i></i><b></b></div>
+            <h2>One less thing on your mind.</h2>
+            <p>Start with a menu or order question. This is a safe preview: messages will not trigger live actions.</p>
+            <div class="suggestion-grid">
+              @for (suggestion of suggestions; track suggestion; let index = $index) {
+                <button type="button" class="suggestion-card" (click)="useSuggestion(suggestion)">
+                  <span>{{ index === 0 ? '▤' : index === 1 ? '▦' : '✳' }}</span><strong>{{ suggestion }}</strong><i>↗</i>
+                </button>
+              }
+            </div>
+          </div>
+        } @else {
+          <div class="message-list">
+            <div class="message-preview-banner"><span>i</span> Preview mode — no AI provider or live restaurant actions are connected.</div>
+            @for (message of messages(); track $index) {
+              <article class="message-row" [class.user-row]="message.role === 'user'">
+                <span class="message-avatar" [class.user-avatar]="message.role === 'user'">{{ message.role === 'assistant' ? '✳' : 'RA' }}</span>
+                <div class="message-content"><span class="message-sender">{{ message.role === 'assistant' ? 'RESTOPILOT AI · PREVIEW' : 'YOU' }}</span><p>{{ message.content }}</p></div>
+              </article>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="composer-wrap">
+        <form class="composer" (submit)="$event.preventDefault(); send()">
+          <textarea
+            aria-label="Message the AI assistant"
+            rows="1"
+            [value]="draft()"
+            (input)="updateDraft($event)"
+            (keydown.enter)="sendOnEnter($event)"
+            placeholder="Ask about your menu, orders or service…"
+          ></textarea>
+          <div class="composer-bottom"><span><span class="composer-spark">✳</span> Preview only · nothing is sent to a live AI</span><div><button type="button" class="voice-disabled" disabled aria-label="Voice input not available">∿</button><button type="submit" class="send-button" [disabled]="!draft().trim()" aria-label="Send message">↑</button></div></div>
+        </form>
+        <p class="composer-footnote">AI can make mistakes. Review all operational changes before applying them.</p>
+      </div>
+    </section>
+  </main>
+</div>

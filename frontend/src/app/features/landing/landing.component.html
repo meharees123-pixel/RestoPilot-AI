@@ -1,0 +1,312 @@
+<div class="landing-shell">
+  <header class="site-header">
+    <a class="brand" routerLink="/" aria-label="RestoPilot AI home" (click)="closeNavigation()">
+      <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+      <span class="brand-name">restopilot<span>AI</span></span>
+    </a>
+
+    <button
+      class="mobile-menu-toggle"
+      type="button"
+      [attr.aria-expanded]="navOpen()"
+      aria-controls="primary-navigation"
+      aria-label="Toggle navigation"
+      (click)="toggleNavigation()"
+    >
+      <span></span><span></span>
+    </button>
+
+    <nav id="primary-navigation" class="main-nav" [class.open]="navOpen()" aria-label="Main navigation">
+      <a href="#platform" (click)="closeNavigation()">Platform</a>
+      <a href="#how-it-works" (click)="closeNavigation()">How it works</a>
+      <a href="#pricing" (click)="closeNavigation()">Pricing</a>
+      <a href="#faq" (click)="closeNavigation()">FAQ</a>
+      <div class="mobile-nav-actions">
+        <a class="nav-login" routerLink="/login" (click)="closeNavigation()">Sign in</a>
+        <a class="button button-green button-small" routerLink="/login" (click)="closeNavigation()">Start a pilot <span>↗</span></a>
+      </div>
+    </nav>
+
+    <div class="header-actions">
+      <a class="nav-login" routerLink="/login">Sign in</a>
+      <a class="button button-green button-small" routerLink="/login">Start a pilot <span>↗</span></a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero-section">
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <div class="eyebrow"><span class="eyebrow-pulse"></span> THE AI OPERATING SYSTEM FOR RESTAURANTS</div>
+          <h1>Run your restaurant<br />through <span>WhatsApp.</span></h1>
+          <p class="hero-lede">
+            Let AI help with menus, orders, reservations and customer conversations—so your team
+            can stay focused on the food and the people.
+          </p>
+          <div class="hero-actions">
+            <a class="button button-green" routerLink="/login">Start Free Trial <span>↗</span></a>
+            <a class="button button-quiet" href="#ai-showcase"><span class="play-icon">▶</span> Watch demo</a>
+          </div>
+          <p class="hero-note">Early access is currently invitation-led. No credit card required.</p>
+          <div class="hero-proof">
+            <div class="avatar-stack" aria-hidden="true"><span>R</span><span>Q</span><span>+</span></div>
+            <p><strong>Made for the rhythm of restaurant life</strong><br /><span>Built WhatsApp-first, with Qatar in mind.</span></p>
+          </div>
+        </div>
+
+        <div class="hero-visual" aria-label="Illustrative RestoPilot AI product preview">
+          <div class="visual-orbit orbit-one"></div>
+          <div class="visual-orbit orbit-two"></div>
+          <div class="floating-note note-orders"><span class="mini-icon mint">↗</span><span><small>New order</small><strong>#1048 · QAR 68</strong></span><i></i></div>
+          <div class="floating-note note-menu"><span class="mini-icon violet">✳</span><span><small>Menu updated</small><strong>Chicken Burger</strong></span><b>Now available</b></div>
+
+          <div class="phone-card">
+            <div class="phone-topline"><span class="phone-camera"></span><span>WhatsApp</span><span class="phone-menu">···</span></div>
+            <div class="chat-header">
+              <span class="chat-avatar">R</span>
+              <span><strong>RestoPilot AI</strong><small>online now</small></span>
+              <span class="verified-mark">✓</span>
+            </div>
+            <div class="chat-date">TODAY, 12:41 PM</div>
+            <div class="chat-message guest-message">Chicken burger is unavailable.</div>
+            <div class="chat-message ai-message">
+              <span class="ai-message-label">✳ AI ASSISTANT</span>
+              Got it. I can mark Chicken Burger as unavailable for your branch.
+              <span class="chat-time">12:41 PM <b>✓✓</b></span>
+            </div>
+            <div class="chat-message guest-message short-message">Yes, do that.</div>
+            <div class="chat-message ai-message final-message">
+              <span class="ai-message-label">✳ AI ASSISTANT</span>
+              Updated. Your team can make it available again anytime.
+              <span class="chat-time">12:41 PM <b>✓✓</b></span>
+            </div>
+            <div class="chat-input-preview"><span>Message</span><span>⌁</span></div>
+          </div>
+
+          <div class="floating-note note-insight"><span class="insight-spark">✦</span><span><small>AI suggestion</small><strong>Service is picking up</strong></span><span class="insight-bars"><i></i><i></i><i></i><i></i><i></i></span></div>
+          <div class="visual-caption"><span class="caption-dot"></span> Product preview · illustrative conversation</div>
+        </div>
+      </div>
+      <div class="hero-bottom-line"><span>LESS ADMIN. MORE HOSPITALITY.</span><span>01 — 04</span></div>
+    </section>
+
+    <section class="trust-section" aria-label="Designed for restaurant teams">
+      <p class="section-kicker">BUILT FOR THE PEOPLE BEHIND THE PASS</p>
+      <div class="trust-content">
+        <div class="trust-title">One calmer way to run service.</div>
+        <div class="trust-stat"><strong>24<span>/7</span></strong><small>Designed for always-on conversations</small></div>
+        <div class="trust-stat"><strong>80<span>%</span></strong><small>Less repetitive admin is the goal</small></div>
+        <div class="trust-stat"><strong>99<span>%</span></strong><small>Response coverage is a product target</small></div>
+      </div>
+      <p class="trust-disclaimer">Product targets shown for direction; performance claims require validation with restaurant pilots.</p>
+    </section>
+
+    <section class="problem-section section-wrap">
+      <div class="section-intro">
+        <p class="section-kicker">THE EVERYDAY CHAOS</p>
+        <h2>Service moves fast.<br /><span>Your tools should too.</span></h2>
+        <p>Great restaurants lose time when customer conversations and daily operations live in different places.</p>
+      </div>
+      <div class="before-after">
+        <div class="comparison-column before-column">
+          <div class="comparison-heading"><span class="comparison-icon">–</span><div><small>WITHOUT A COPILOT</small><h3>Before RestoPilot</h3></div></div>
+          <ul>
+            <li><span>×</span> WhatsApp messages get buried during rush</li>
+            <li><span>×</span> Menu changes depend on someone finding a dashboard</li>
+            <li><span>×</span> The same customer questions are answered again</li>
+            <li><span>×</span> Reservations and orders compete for attention</li>
+          </ul>
+        </div>
+        <div class="comparison-divider" aria-hidden="true"><span>→</span></div>
+        <div class="comparison-column after-column">
+          <div class="comparison-heading"><span class="comparison-icon">✳</span><div><small>WITH A RESTAURANT COPILOT</small><h3>After RestoPilot</h3></div></div>
+          <ul>
+            <li><span>✓</span> One AI-assisted flow for guest conversations</li>
+            <li><span>✓</span> Ask for menu and availability updates in plain language</li>
+            <li><span>✓</span> Keep order and guest context close at hand</li>
+            <li><span>✓</span> Give your team more room to focus on hospitality</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="platform" class="features-section section-wrap">
+      <div class="section-heading-row">
+        <div class="section-intro">
+          <p class="section-kicker">A SMARTER SERVICE STACK</p>
+          <h2>Your AI team,<br /><span>built around your restaurant.</span></h2>
+        </div>
+        <p class="section-side-note">A focused workspace for the moments that make or break a great service.</p>
+      </div>
+      <div class="feature-grid">
+        @for (feature of features; track feature.title) {
+          <app-feature-tile [feature]="feature" />
+        }
+      </div>
+    </section>
+
+    <section id="how-it-works" class="steps-section section-wrap">
+      <div class="section-intro centered-intro">
+        <p class="section-kicker">FROM SETUP TO SERVICE</p>
+        <h2>Four steps to a <span>lighter day.</span></h2>
+        <p>Start with the workflows your restaurant already knows. Add intelligence as you go.</p>
+      </div>
+      <div class="steps-grid">
+        @for (step of steps; track step.number; let last = $last) {
+          <article class="step-item">
+            <div class="step-top"><span class="step-number">{{ step.number }}</span><span class="step-connector" [class.last]="last"></span></div>
+            <h3>{{ step.title }}</h3>
+            <p>{{ step.text }}</p>
+          </article>
+        }
+      </div>
+    </section>
+
+    <section id="ai-showcase" class="showcase-section section-wrap">
+      <div class="showcase-copy">
+        <p class="section-kicker">SAY IT. SEE IT DONE.</p>
+        <h2>Your next move<br />can be a <span>message.</span></h2>
+        <p>Give your team an AI interface that understands restaurant language and keeps actions clear before they happen.</p>
+        <div class="showcase-point"><span>01</span><p><strong>Natural, not navigational</strong><br />Make a request in the words you already use.</p></div>
+        <div class="showcase-point"><span>02</span><p><strong>Useful context, built in</strong><br />Keep branch, menu and customer details close to the conversation.</p></div>
+        <a class="text-link" routerLink="/login">Explore the workspace <span>↗</span></a>
+      </div>
+      <div class="showcase-chat">
+        <div class="showcase-chat-top"><span class="assistant-avatar">✳</span><span><strong>Operations Copilot</strong><small>Product conversation preview</small></span><span class="preview-tag">PREVIEW</span></div>
+        <div class="showcase-date">TODAY · OPERATIONS</div>
+        <div class="showcase-bubble user-bubble">Chicken Burger is unavailable.</div>
+        <div class="showcase-bubble assistant-bubble">
+          <span class="bubble-label">✳ RESTOPILOT AI</span>
+          I found Chicken Burger at your Wakra branch. Should I mark it unavailable there?
+          <div class="action-preview"><span>Chicken Burger</span><b>Available</b><span class="action-arrow">→</span><strong>Unavailable</strong></div>
+          <small class="bubble-footnote">A confirmation step keeps operational changes in your control.</small>
+        </div>
+        <div class="showcase-bubble user-bubble second-user">Yes, for Wakra.</div>
+        <div class="showcase-result"><span>✓</span><span><strong>Request confirmed</strong><small>Illustrative preview · no live menu was changed</small></span></div>
+        <div class="composer-preview"><span>Ask your operations copilot…</span><span class="composer-voice">∿</span><span class="composer-send">↑</span></div>
+      </div>
+    </section>
+
+    <section class="product-section section-wrap">
+      <div class="section-heading-row">
+        <div class="section-intro">
+          <p class="section-kicker">THE RESTAURANT WORKSPACE</p>
+          <h2>One view of <span>what’s moving.</span></h2>
+        </div>
+        <p class="section-side-note">Designed to feel clear during the rush and useful after it.</p>
+      </div>
+      <div class="product-tabs" role="tablist" aria-label="Product preview views">
+        @for (preview of previews; track preview.name; let index = $index) {
+          <button
+            class="product-tab"
+            [class.selected]="activePreview() === index"
+            role="tab"
+            [attr.aria-selected]="activePreview() === index"
+            (click)="selectPreview(index)"
+          >{{ preview.name }}</button>
+        }
+      </div>
+      <div class="dashboard-preview" role="tabpanel">
+        <div class="preview-sidebar">
+          <div class="preview-brand"><span class="brand-mark mini-brand"><span></span><span></span><span></span></span><b>restopilot</b></div>
+          <div class="preview-restaurant"><span class="restaurant-avatar">S</span><span><b>Souq Kitchen</b><small>Doha · Main branch</small></span><span class="switcher-arrow">⌄</span></div>
+          <span class="preview-side-label">WORKSPACE</span>
+          <div class="preview-nav-row active"><span>◫</span> Overview</div>
+          <div class="preview-nav-row"><span>▤</span> Orders <i>8</i></div>
+          <div class="preview-nav-row"><span>▦</span> Menu</div>
+          <div class="preview-nav-row"><span>◷</span> Reservations</div>
+          <div class="preview-nav-row"><span>✳</span> AI Assistant</div>
+          <div class="preview-help"><span>✦</span><b>Your AI copilot</b><small>Ask about today's service</small></div>
+        </div>
+        <div class="preview-main">
+          <div class="preview-topbar"><div><small>WEDNESDAY, 12:41 PM</small><h3>{{ currentPreview().name }} <span>↘</span></h3></div><div class="preview-top-actions"><span class="preview-search">⌕ <i>Search anything…</i></span><span class="preview-notification">♧</span><span class="preview-user">SA</span></div></div>
+          <div class="preview-greeting"><div><small>GOOD AFTERNOON, SARA</small><h4>Let’s make today a good one.</h4><p>Here’s the pulse of your restaurant.</p></div><span class="preview-date-pill">Today <b>⌄</b></span></div>
+          <div class="preview-stat-grid"><div><small>{{ currentPreview().metricLabel }}</small><strong>{{ currentPreview().metric }}</strong><em>Illustrative preview</em></div><div><small>Open orders</small><strong>08</strong><em class="positive">+2 since 12 PM</em></div><div><small>Table bookings</small><strong>12</strong><em>Across today</em></div></div>
+          <div class="preview-table">
+            <div class="preview-table-title"><span><b>{{ currentPreview().name }} at a glance</b><small>Example data for product visualization</small></span><span class="view-all">View all ↗</span></div>
+            @for (row of currentPreview().rows; track row.title + row.detail) {
+              <div class="preview-data-row"><span class="preview-row-icon">◈</span><span class="preview-row-title"><b>{{ row.title }}</b><small>{{ row.detail }}</small></span><strong>{{ row.value }}</strong><span class="preview-state">{{ row.state }}</span></div>
+            }
+          </div>
+        </div>
+      </div>
+      <p class="mockup-disclaimer">Product screens shown are illustrative mockups, not live restaurant data.</p>
+    </section>
+
+    <section id="pricing" class="pricing-section section-wrap">
+      <div class="section-intro centered-intro">
+        <p class="section-kicker">PRICING THAT GROWS WITH YOU</p>
+        <h2>Start focused.<br /><span>Scale with confidence.</span></h2>
+        <p>Choose the level of support that fits your restaurant today. Pilot pricing is available on request.</p>
+      </div>
+      <div class="pricing-grid">
+        <article class="price-card">
+          <div class="price-top"><span class="plan-name">STARTER</span><span class="plan-symbol">◌</span></div>
+          <h3>One restaurant.<br />Less busywork.</h3>
+          <p class="plan-description">For independent teams bringing their daily operations into one place.</p>
+          <div class="plan-price"><strong>Pilot</strong><span>early access</span></div>
+          <a class="button button-outline" routerLink="/login">Request access <span>↗</span></a>
+          <div class="plan-includes"><small>MADE FOR YOUR FIRST STEP</small><p>Menu and branch workspace</p><p>Order overview</p><p>Guided onboarding</p></div>
+        </article>
+        <article class="price-card featured-price">
+          <span class="popular-label">BUILT TO GROW</span>
+          <div class="price-top"><span class="plan-name">PROFESSIONAL</span><span class="plan-symbol">✳</span></div>
+          <h3>Your AI-powered<br />service partner.</h3>
+          <p class="plan-description">For growing restaurants ready to connect more guest and team workflows.</p>
+          <div class="plan-price"><strong>Let’s talk</strong><span>pilot plan</span></div>
+          <a class="button button-green" routerLink="/login">Explore a pilot <span>↗</span></a>
+          <div class="plan-includes"><small>EVERYTHING IN STARTER, PLUS</small><p>AI-assisted operations preview</p><p>Multi-branch workflows</p><p>Priority onboarding</p></div>
+        </article>
+        <article class="price-card">
+          <div class="price-top"><span class="plan-name">ENTERPRISE</span><span class="plan-symbol">⌘</span></div>
+          <h3>Built around<br />your operation.</h3>
+          <p class="plan-description">For multi-location groups with tailored rollout and integration needs.</p>
+          <div class="plan-price"><strong>Custom</strong><span>by conversation</span></div>
+          <a class="button button-outline" routerLink="/login">Talk to us <span>↗</span></a>
+          <div class="plan-includes"><small>DESIGNED TO FIT</small><p>Multi-location planning</p><p>Custom rollout support</p><p>Enterprise requirements review</p></div>
+        </article>
+      </div>
+      <p class="pricing-note">Plan details and availability are being validated with pilot restaurants.</p>
+    </section>
+
+    <section id="faq" class="faq-section section-wrap">
+      <div class="faq-heading">
+        <p class="section-kicker">GOOD QUESTIONS</p>
+        <h2>Before the first<br /><span>message.</span></h2>
+        <p>Wondering how an AI copilot fits into the way your restaurant already works?</p>
+      </div>
+      <div class="faq-list">
+        <app-faq-item question="What is RestoPilot AI?" answer="RestoPilot AI is being built as a WhatsApp-first restaurant operating system: a shared workspace for guest conversations and everyday restaurant operations, with AI-assisted workflows." />
+        <app-faq-item question="Do I need to replace my current POS?" answer="RestoPilot is designed to help with conversations and operations. Integrations and POS compatibility depend on your setup and should be confirmed during pilot onboarding." />
+        <app-faq-item question="Can my team make changes by voice?" answer="Voice workflows are part of the product direction. Availability depends on the pilot configuration; the current website shows an illustrative experience, not a live voice service." />
+        <app-faq-item question="Is RestoPilot available for restaurants in Qatar?" answer="The product is being designed with Qatar restaurant workflows in mind. Contact the team through your pilot onboarding to confirm current availability." />
+        <app-faq-item question="How does the pilot work?" answer="Early access is invitation-led. A pilot starts with your restaurant's workflows, branches and menu, then validates the experience with your team before a broader rollout." />
+      </div>
+    </section>
+
+    <section class="final-cta section-wrap">
+      <div class="cta-glow"></div>
+      <div class="cta-content">
+        <p class="section-kicker">MAKE SPACE FOR HOSPITALITY</p>
+        <h2>Ready to let AI help<br />run your restaurant?</h2>
+        <p>Start with one conversation. Build a better service flow from there.</p>
+        <div class="hero-actions">
+          <a class="button button-green" routerLink="/login">Start Free Trial <span>↗</span></a>
+          <a class="button button-quiet" href="#faq">Book a demo <span>↗</span></a>
+        </div>
+        <small>Early access is invitation-led today.</small>
+      </div>
+      <div class="cta-decoration" aria-hidden="true"><span>R</span><i></i><b></b></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <a class="brand footer-brand" routerLink="/">
+      <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+      <span class="brand-name">restopilot<span>AI</span></span>
+    </a>
+    <p>Your Restaurant, Piloted by AI.</p>
+    <div class="footer-links"><a href="#platform">Platform</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a><a routerLink="/login">Sign in</a></div>
+    <small>© 2026 RestoPilot AI. Built for better service.</small>
+  </footer>
+</div>

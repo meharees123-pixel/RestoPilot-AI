@@ -1,0 +1,197 @@
+<div class="workspace-shell" id="overview">
+  <button
+    class="sidebar-scrim"
+    [class.visible]="mobileSidebarOpen()"
+    aria-label="Close navigation"
+    (click)="closeSidebar()"
+  ></button>
+
+  <aside class="workspace-sidebar" [class.mobile-open]="mobileSidebarOpen()">
+    <a class="workspace-brand" routerLink="/dashboard" (click)="closeSidebar()">
+      <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+      <span>restopilot<span class="brand-ai">AI</span></span>
+    </a>
+
+    <button class="restaurant-switcher" type="button" aria-label="Restaurant workspace">
+      <span class="restaurant-avatar">R</span>
+      <span class="restaurant-label"><strong>Your restaurant</strong><small>Workspace overview</small></span>
+      <span class="switcher-chevron">⌄</span>
+    </button>
+
+    <span class="nav-section-label">WORKSPACE</span>
+    <nav class="workspace-nav" aria-label="Restaurant workspace">
+      <a class="workspace-nav-link active" href="#overview" (click)="closeSidebar()"><span class="nav-glyph">◫</span> Overview</a>
+      <a class="workspace-nav-link" href="#orders" (click)="closeSidebar()"><span class="nav-glyph">▤</span> Orders <span class="nav-count">{{ openOrders() }}</span></a>
+      <a class="workspace-nav-link" href="#customers" (click)="closeSidebar()"><span class="nav-glyph">♙</span> Customers</a>
+      <a class="workspace-nav-link" href="#reservations" (click)="closeSidebar()"><span class="nav-glyph">◷</span> Reservations <span class="nav-soon">SOON</span></a>
+      <a class="workspace-nav-link" href="#menu" (click)="closeSidebar()"><span class="nav-glyph">▦</span> Menu</a>
+      <a class="workspace-nav-link disabled-link" aria-disabled="true" title="Campaign tools are not connected yet"><span class="nav-glyph">↗</span> Campaigns <span class="nav-soon">SOON</span></a>
+      <a class="workspace-nav-link disabled-link" aria-disabled="true" title="Reports will appear when analytics is connected"><span class="nav-glyph">⌁</span> Reports <span class="nav-soon">SOON</span></a>
+    </nav>
+
+    <span class="nav-section-label assistant-label">YOUR COPILOT</span>
+    <a class="assistant-nav-link" routerLink="/dashboard/assistant" (click)="closeSidebar()">
+      <span class="assistant-nav-icon">✳</span><span>AI Assistant</span><span class="nav-arrow">↗</span>
+    </a>
+
+    <div class="sidebar-grow"></div>
+    <div class="sidebar-connect">
+      <span class="connect-icon">⌁</span>
+      <div><strong>WhatsApp connection</strong><small>Setup not connected</small></div>
+      <span class="connect-dot"></span>
+    </div>
+    <button class="sidebar-settings" type="button" disabled><span>⚙</span> Settings <small>SOON</small></button>
+    <div class="sidebar-footer"><span>RP</span><span><strong>Restaurant admin</strong><small>Business workspace</small></span></div>
+  </aside>
+
+  <main class="workspace-main">
+    <header class="workspace-topbar">
+      <div class="topbar-leading">
+        <button class="mobile-menu-button" type="button" aria-label="Open navigation" (click)="mobileSidebarOpen.set(true)">☰</button>
+        <span class="breadcrumb">Workspace <b>/</b> Overview</span>
+      </div>
+      <div class="topbar-actions">
+        <label class="global-search"><span>⌕</span><input aria-label="Search orders" placeholder="Search orders…" [value]="search()" (input)="updateSearch($event)" /><kbd>⌘ K</kbd></label>
+        <button class="icon-button notification-button" type="button" aria-label="Notifications" [attr.aria-expanded]="notificationsOpen()" (click)="toggleNotifications()">
+          ♧<i></i>
+        </button>
+        <button class="icon-button theme-button" type="button" [attr.aria-label]="theme.dark() ? 'Switch to light mode' : 'Switch to dark mode'" (click)="theme.toggle()">{{ theme.dark() ? '☼' : '◐' }}</button>
+        <button class="topbar-profile" type="button" aria-label="Open profile actions" (click)="toggleProfile()">RA</button>
+        @if (notificationsOpen()) {
+          <div class="notification-popover"><strong>Service activity</strong><small>{{ activity().length }} recent order updates in your workspace.</small><a href="#orders" (click)="notificationsOpen.set(false)">View orders <span>↗</span></a></div>
+        }
+        @if (profileOpen()) {
+          <div class="top-profile-popover"><strong>Restaurant admin</strong><small>Business workspace access</small><button type="button" (click)="logout()">Sign out</button></div>
+        }
+      </div>
+    </header>
+
+    <div class="page-content">
+      @if (loading()) {
+        <div class="loading-state" role="status"><span class="loading-spinner"></span><strong>Preparing your workspace</strong><small>Loading restaurant activity…</small></div>
+      } @else if (error()) {
+        <section class="error-state" role="alert">
+          <span class="error-symbol">!</span><div><h2>We couldn’t load your workspace.</h2><p>{{ error() }}</p></div>
+          <button type="button" class="button button-outline" (click)="load()">Try again</button>
+        </section>
+      } @else {
+        <section class="page-heading">
+          <div>
+            <p class="eyebrow">{{ todayLabel }} · RESTAURANT WORKSPACE</p>
+            <h1>{{ greeting }}<span>.</span></h1>
+            <p class="heading-subtitle">A clear view of your service, all in one place.</p>
+          </div>
+          <div class="heading-actions"><span class="live-status"><i></i> Workspace loaded</span><button class="date-filter" type="button">Today <span>⌄</span></button></div>
+        </section>
+
+        <section class="metric-grid" aria-label="Today's restaurant metrics">
+          <article class="metric-card revenue-metric">
+            <div class="metric-top"><span>Order value today</span><span class="metric-icon green-icon">↗</span></div>
+            <strong>{{ revenueLabel() }}</strong>
+            <div class="metric-foot"><span>{{ todayOrders().length }} orders today</span><small>From up to 100 recent orders</small></div>
+            <div class="metric-sparkline" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          </article>
+          <article class="metric-card">
+            <div class="metric-top"><span>Open orders</span><span class="metric-icon violet-icon">▤</span></div>
+            <strong>{{ openOrders() }}</strong>
+            <div class="metric-foot"><span>Across your workspace</span><small>Live order status</small></div>
+          </article>
+          <article class="metric-card">
+            <div class="metric-top"><span>Active branches</span><span class="metric-icon blue-icon">⌖</span></div>
+            <strong>{{ activeBranches() }}<small class="metric-total"> / {{ branches().length }}</small></strong>
+            <div class="metric-foot"><span>Ready for service</span><small>Branch availability</small></div>
+          </article>
+          <article class="metric-card reservations-metric" id="reservations">
+            <div class="metric-top"><span>Reservations</span><span class="metric-icon amber-icon">◷</span></div>
+            <strong class="metric-pending">Coming soon</strong>
+            <div class="metric-foot"><span>Reservation workspace</span><small>Module not connected yet</small></div>
+          </article>
+        </section>
+
+        <section class="insight-strip">
+          <span class="insight-icon">✳</span>
+          <div class="insight-copy"><span>AI COPILOT · PREVIEW</span><strong>Put everyday operations into words.</strong><small>Ask about your menu or orders. Actions are not connected in this preview.</small></div>
+          <a routerLink="/dashboard/assistant" class="insight-action">Open assistant <span>↗</span></a>
+        </section>
+
+        <section class="main-grid">
+          <article class="panel orders-panel" id="orders">
+            <div class="panel-heading">
+              <div><span class="panel-eyebrow">SERVICE OVERVIEW</span><h2>Recent orders</h2><p>Latest activity from your restaurant</p></div>
+              <a href="#orders" class="subtle-link">All orders <span>↗</span></a>
+            </div>
+            @if (recentOrders().length) {
+              <div class="orders-table-wrap">
+                <table class="orders-table">
+                  <thead><tr><th>ORDER</th><th>STATUS</th><th>TIME</th><th class="amount-heading">TOTAL</th></tr></thead>
+                  <tbody>
+                    @for (order of recentOrders(); track order._id) {
+                      <tr><td><strong class="order-number">#{{ order.orderNumber }}</strong><small>Restaurant order</small></td><td><span class="status-chip" [class]="statusClass(order.status)"><i></i>{{ order.status }}</span></td><td class="order-time">{{ formatTime(order.createdAt) }}</td><td class="order-amount">QAR {{ order.grandTotal }}</td></tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            } @else {
+              <div class="empty-state"><span class="empty-icon">▤</span><strong>{{ search() ? 'No matching orders' : 'Your first order will appear here' }}</strong><p>{{ search() ? 'Try another order number.' : 'When an order is created, you’ll see its progress here.' }}</p></div>
+            }
+          </article>
+
+          <article class="panel activity-panel">
+            <div class="panel-heading"><div><span class="panel-eyebrow">RECENT UPDATES</span><h2>Recent activity</h2><p>Latest orders from your workspace</p></div><span class="activity-pulse"></span></div>
+            @if (activity().length) {
+              <div class="activity-list">
+                @for (item of activity(); track item.orderNumber) {
+                  <div class="activity-item"><span class="activity-dot"></span><div><p>Order <strong>#{{ item.orderNumber }}</strong> is <b>{{ item.status }}</b></p><small>{{ item.time }} · Orders</small></div></div>
+                }
+              </div>
+            } @else {
+              <div class="empty-state compact-empty"><span class="empty-icon">⌁</span><strong>All quiet for now</strong><p>New service activity will show here.</p></div>
+            }
+            <div class="activity-footer"><span class="activity-pulse"></span> Showing the latest loaded orders</div>
+          </article>
+        </section>
+
+        <section class="secondary-grid">
+          <article class="panel menu-panel" id="menu">
+            <div class="panel-heading"><div><span class="panel-eyebrow">MENU STATUS</span><h2>Items ready to order</h2><p>{{ availableItems() }} of {{ items().length }} items available</p></div><span class="panel-icon">▦</span></div>
+            @if (items().length) {
+              <div class="menu-items-list">
+                @for (item of items().slice(0, 4); track item._id) {
+                  <div class="menu-item-row"><span class="menu-item-symbol">{{ item.name.charAt(0).toUpperCase() }}</span><span class="menu-item-info"><strong>{{ item.name }}</strong><small>QAR {{ item.price }}</small></span><span class="availability" [class.unavailable]="!item.isAvailable"><i></i>{{ item.isAvailable ? 'Available' : 'Unavailable' }}</span></div>
+                }
+              </div>
+            } @else {
+              <div class="empty-state compact-empty"><strong>No menu items yet</strong><p>Your restaurant menu will appear here.</p></div>
+            }
+          </article>
+
+          <article class="panel branches-panel" id="branches">
+            <div class="panel-heading"><div><span class="panel-eyebrow">YOUR LOCATIONS</span><h2>Branches</h2><p>Service locations</p></div><span class="panel-icon">⌖</span></div>
+            @if (branches().length) {
+              <div class="branch-list">
+                @for (branch of branches().slice(0, 4); track branch._id) {
+                  <div class="branch-item"><span class="branch-mark">⌖</span><span class="branch-name"><strong>{{ branch.name }}</strong><small>Restaurant location</small></span><span class="branch-status" [class.inactive]="branch.status !== 'active'"><i></i>{{ branch.status }}</span></div>
+                }
+              </div>
+            } @else {
+              <div class="empty-state compact-empty"><strong>No branches configured</strong><p>Add a location to see it here.</p></div>
+            }
+          </article>
+
+          <article class="panel customers-panel" id="customers">
+            <div class="panel-heading"><div><span class="panel-eyebrow">GUEST RELATIONSHIPS</span><h2>Customers</h2><p>{{ customers().length }} customer profiles</p></div><span class="panel-icon">♙</span></div>
+            <div class="customer-highlight"><span class="customer-illustration">♡</span><div><strong>Every conversation can feel personal.</strong><p>Customer preferences and loyalty insights will live here as those tools are connected.</p></div></div>
+            <a href="#customers" class="subtle-link">Customer workspace <span>↗</span></a>
+          </article>
+        </section>
+
+        <section class="bottom-assistant">
+          <div class="bottom-assistant-copy"><span class="assistant-star">✳</span><div><span class="panel-eyebrow">YOUR OPERATIONS COPILOT</span><h2>What would you like to take off your plate?</h2><p>Explore the assistant preview. No restaurant data is changed.</p></div></div>
+          <a routerLink="/dashboard/assistant" class="button button-green">Open AI Assistant <span>↗</span></a>
+        </section>
+
+        <footer class="workspace-footer"><span>RESTOPILOT AI <b>·</b> RESTAURANT WORKSPACE</span><span>Preview environment · AI tools not connected</span></footer>
+      }
+    </div>
+  </main>
+</div>
