@@ -2,11 +2,12 @@
 
 ## Status
 
-This document describes the target architecture. The implemented backend currently provides
-NestJS APIs for authentication, tenant, branch, menu, customer and order functionality backed by
-MongoDB. Redis is present in local deployment configuration, and BullMQ is a backend dependency,
-but no queue workers are wired. WhatsApp, agent orchestration, provider clients, RAG, voice,
-reservations and proactive processing are not implemented yet.
+This document describes the target architecture. The implemented backend currently provides NestJS APIs for WhatsApp OTP authentication,
+super-admin MFA, platform tenant provisioning, access audit, and tenant-scoped branch, menu,
+customer and order functionality backed by MongoDB. WhatsApp OTP uses the Cloud API template
+endpoint. Redis is present in local deployment configuration, and BullMQ is a backend dependency,
+but no queue workers are wired. AI orchestration, provider clients, RAG, voice, reservations and
+proactive processing are not implemented yet.
 
 ## Target deployment architecture
 

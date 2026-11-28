@@ -1,9 +1,8 @@
 import { Body, Controller, HttpCode, Post, Req, UseGuards } from "@nestjs/common";
-import { ApiBearerAuth, ApiNoContentResponse } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiNoContentResponse, ApiOkResponse, ApiTags } from "@nestjs/swagger";
 import { AuthenticatedRequest, JwtAuthGuard } from "./auth.guard";
-import { ApiOkResponse, ApiTags } from "@nestjs/swagger";
 import { AuthService } from "./auth.service";
-import { LoginDto, RefreshTokenDto } from "./auth.dto";
+import { LoginDto, RefreshTokenDto, RequestOtpDto, VerifyOtpDto } from "./auth.dto";
 
 @ApiTags("Authentication")
 @Controller("auth")
@@ -11,13 +10,27 @@ export class AuthController {
   constructor(private readonly auth: AuthService) {}
 
   @Post("login")
-  @ApiOkResponse({ description: "Returns a short-lived access token" })
-  login(@Body() dto: LoginDto): Promise<{ accessToken: string; expiresIn: number }> {
-    return this.auth.login(dto.email, dto.password);
+  @ApiOkResponse({ description: "Authenticates a super administrator with password and MFA" })
+  login(@Body() dto: LoginDto) {
+    return this.auth.login(dto.email, dto.password, dto.mfaCode);
+  }
+
+  @Post("request-otp")
+  @HttpCode(200)
+  @ApiOkResponse({ description: "Requests a WhatsApp verification code" })
+  requestOtp(@Body() dto: RequestOtpDto) {
+    return this.auth.requestOtp(dto.phoneNumber);
+  }
+
+  @Post("verify-otp")
+  @HttpCode(200)
+  @ApiOkResponse({ description: "Verifies a WhatsApp code and returns a user session" })
+  verifyOtp(@Body() dto: VerifyOtpDto) {
+    return this.auth.verifyOtp(dto.phoneNumber, dto.otp);
   }
 
   @Post("refresh")
-  @ApiOkResponse({ description: "Rotates the refresh token and returns a new access token" })
+  @ApiOkResponse({ description: "Rotates the refresh token and returns a new session" })
   refresh(@Body() dto: RefreshTokenDto) {
     return this.auth.refresh(dto.refreshToken);
   }

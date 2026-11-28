@@ -6,11 +6,15 @@ import { TenantContextGuard } from "../../common/tenant-context.guard";
 import { CustomerController } from "./customer.controller";
 import { CustomerService } from "./customer.service";
 import { Customer, CustomerSchema } from "./customer.schema";
+import { Order, OrderSchema } from "../order/order.schema";
 
 @Module({
   imports: [
     AuthModule,
-    MongooseModule.forFeature([{ name: Customer.name, schema: CustomerSchema }]),
+    MongooseModule.forFeature([
+      { name: Customer.name, schema: CustomerSchema },
+      { name: Order.name, schema: OrderSchema },
+    ]),
   ],
   controllers: [CustomerController],
   providers: [CustomerService, RolesGuard, TenantContextGuard],

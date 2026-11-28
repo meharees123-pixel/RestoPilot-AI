@@ -43,7 +43,7 @@ describe("OrderService", () => {
     );
     const user = {
       sub: "64e5e5e5e5e5e5e5e5e5e5e5",
-      role: UserRole.MANAGER,
+      role: UserRole.RESTAURANT_MANAGER,
       restaurantId,
       branchIds: [],
     } as AuthenticatedRequest["user"];
@@ -83,7 +83,7 @@ describe("OrderService", () => {
     await expect(
       service.updateStatus({
         sub: customerId,
-        role: UserRole.MANAGER,
+        role: UserRole.RESTAURANT_MANAGER,
         restaurantId,
         branchIds: [],
       }, "64f6f6f6f6f6f6f6f6f6f6f6", OrderStatus.CANCELLED),

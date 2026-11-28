@@ -14,8 +14,12 @@ with schema auto-indexing enabled.
 2. Run `docker compose up --build`.
 3. The web portal is at `http://localhost:8080`, API at `http://localhost:3000`, Swagger at
    `http://localhost:3000/docs`.
-4. To provision a test restaurant, fill in `SEED_*` values and run
-   `docker compose exec api npm run seed:owner`.
+4. Configure WhatsApp Cloud API credentials and an approved OTP template. For inbound message
+   webhooks, configure Meta's callback URL as `https://<public-api-host>/api/v1/webhooks/whatsapp`,
+   set `WHATSAPP_VERIFY_TOKEN`, and configure `WHATSAPP_APP_SECRET`. Seed the platform
+   administrator with `SEED_SUPER_ADMIN_*` and `docker compose exec api npm run seed:super-admin`.
+   Set `SEED_OWNER_*` and `SEED_RESTAURANT_*`, then run `docker compose exec api npm run seed:owner`
+   to invite the first restaurant owner.
 
 Do not expose the Compose MongoDB or Redis ports to the public internet.
 
@@ -29,20 +33,24 @@ deployment with TLS and authentication; do not use the unauthenticated local Com
 2. Provision Atlas with private networking/IP allowlisting, least-privilege database credentials,
    automated backups and point-in-time recovery.
 3. Provision Redis with TLS, authentication, persistence policy and private network access.
-4. Store JWT secrets, Mongo URI, Redis credentials and WhatsApp/provider keys in Secret Manager.
+4. Store JWT/OTP secrets, the super-admin password and MFA secret, Mongo URI, Redis credentials
+   and WhatsApp/provider keys in Secret Manager.
    Inject them into the container runtime; never bake them into images or commit them.
 5. Set `NODE_ENV=production`, `MONGODB_URI`, `MONGODB_DATABASE=RestoPilot`, JWT secrets and
    `CORS_ORIGINS`. The explicit database setting overrides the database path in the MongoDB URI;
    do not store Atlas credentials in source control. The web container
    proxies `/api` to the API service; terminate TLS at a Google HTTPS load balancer with managed
    certificates or an independently maintained TLS reverse proxy.
-6. Run `npm run db:indexes` from the backend release job before rolling out the API. Run
-   `npm run seed:owner` only for initial provisioning, then remove the seed credentials.
+6. Run `npm run db:indexes` from the backend release job before rolling out the API. This migrates
+   the legacy users email index and creates the auth/audit/WhatsApp indexes. Run
+   `npm run seed:super-admin` and `npm run seed:owner` only for initial provisioning; remove
+   bootstrap credentials afterward.
 7. Deploy stateless API replicas behind the load balancer. Monitor health, error rates, Mongo
    connection pool, queue depth, WhatsApp webhook failures and provider latency.
 
-The current Redis connection/BullMQ workers, WhatsApp webhook, and AI provider integrations are
-not implemented in the API yet; do not treat their environment placeholders as active services.
+WhatsApp OTP delivery uses the Cloud API message endpoint and the configured approved template.
+The inbound webhook stores messages and sends a fixed welcome reply; it does not yet execute
+orders or call AI providers. BullMQ workers and AI provider integrations are not implemented.
 
 ## SSL and Nginx
 

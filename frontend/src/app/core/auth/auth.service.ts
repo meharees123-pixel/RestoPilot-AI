@@ -3,10 +3,28 @@ import { Injectable, inject, signal } from '@angular/core';
 import { Observable, catchError, finalize, map, of, shareReplay, tap, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
-interface TokenPair {
+export type UserRole =
+  | 'SUPER_ADMIN'
+  | 'RESTAURANT_OWNER'
+  | 'RESTAURANT_MANAGER'
+  | 'BRANCH_MANAGER';
+
+export interface AuthUser {
+  id: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  email: string | null;
+  role: UserRole;
+  restaurantId: string | null;
+  branchIds: string[];
+}
+
+interface SessionTokens {
   accessToken: string;
   refreshToken: string;
   expiresIn: number;
+  user: AuthUser;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -14,12 +32,26 @@ export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly access = signal<string | null>(null);
   readonly accessToken = this.access.asReadonly();
+  private readonly currentUser = signal<AuthUser | null>(null);
+  readonly user = this.currentUser.asReadonly();
   private readonly refreshStorageKey = 'foodflow.refresh';
   private refreshInFlight: Observable<boolean> | null = null;
 
-  login(email: string, password: string): Observable<void> {
+  loginSuperAdmin(email: string, password: string, mfaCode: string): Observable<void> {
     return this.http
-      .post<TokenPair>(`${environment.apiUrl}/auth/login`, { email, password })
+      .post<SessionTokens>(`${environment.apiUrl}/auth/login`, { email, password, mfaCode })
+      .pipe(tap((tokens) => this.store(tokens)), map(() => undefined));
+  }
+
+  requestOtp(phoneNumber: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${environment.apiUrl}/auth/request-otp`, {
+      phoneNumber,
+    });
+  }
+
+  verifyOtp(phoneNumber: string, otp: string): Observable<void> {
+    return this.http
+      .post<SessionTokens>(`${environment.apiUrl}/auth/verify-otp`, { phoneNumber, otp })
       .pipe(tap((tokens) => this.store(tokens)), map(() => undefined));
   }
 
@@ -34,7 +66,7 @@ export class AuthService {
     if (!refreshToken) return of(false);
 
     this.refreshInFlight = this.http
-      .post<TokenPair>(`${environment.apiUrl}/auth/refresh`, { refreshToken })
+      .post<SessionTokens>(`${environment.apiUrl}/auth/refresh`, { refreshToken })
       .pipe(
         tap((tokens) => this.store(tokens)),
         map(() => true),
@@ -60,11 +92,13 @@ export class AuthService {
 
   clear(): void {
     this.access.set(null);
+    this.currentUser.set(null);
     sessionStorage.removeItem(this.refreshStorageKey);
   }
 
-  private store(tokens: TokenPair): void {
+  private store(tokens: SessionTokens): void {
     this.access.set(tokens.accessToken);
+    this.currentUser.set(tokens.user);
     sessionStorage.setItem(this.refreshStorageKey, tokens.refreshToken);
   }
 }

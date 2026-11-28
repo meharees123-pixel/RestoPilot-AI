@@ -85,6 +85,7 @@
 .insight-copy { display: grid; flex: 1; gap: .18rem; }.insight-copy > span { color: #a68be2; font: 500 .46rem 'DM Mono', monospace; letter-spacing: .1em; }.insight-copy strong { color: #e8e4f2; font-size: .67rem; }.insight-copy small { color: #9095a8; font-size: .54rem; }
 .insight-action { display: flex; gap: .55rem; padding: .5rem .65rem; border: 1px solid rgb(124 58 237 / 23%); border-radius: .48rem; color: #d3c3ff; font-size: .57rem; text-decoration: none; white-space: nowrap; }.insight-action:hover { background: rgb(124 58 237 / 12%); }
 .main-grid { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(15rem, 1fr); gap: .75rem; }
+.main-grid.single-panel, .secondary-grid.single-panel { grid-template-columns: minmax(0, 1fr); }
 .panel { min-width: 0; padding: .95rem; border: 1px solid #202d3e; border-radius: .72rem; background: linear-gradient(150deg, #0c1421, #090f1b); }
 .panel-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: .5rem; margin-bottom: .85rem; }
 .panel-heading h2 { margin: .3rem 0 .25rem; color: #e7edf5; font-size: .88rem; letter-spacing: -.035em; }

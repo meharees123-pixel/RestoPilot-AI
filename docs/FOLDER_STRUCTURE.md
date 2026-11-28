@@ -11,21 +11,27 @@ backend/src/
     tenant-context.guard.ts
   modules/
     auth/
+    audit/
     branch/
     customer/
     health/
     menu/
     order/
+    platform/
     tenant/
+    auth/
 frontend/src/
   app/
     core/auth/
     features/auth/
+    features/platform-admin/
     features/dashboard/
 ```
 
-The backend has no WhatsApp, AI-agent, queue-worker, knowledge, memory, voice, audit or reservation
-modules yet. Redis and BullMQ dependencies/configuration do not imply that workers are implemented.
+The authentication module supports WhatsApp OTP for restaurant users and password/TOTP for super
+administrators. Platform administration currently covers tenant and user provisioning. AI-agent,
+queue-worker, knowledge, memory, voice and reservation modules are not implemented. Redis and
+BullMQ dependencies/configuration do not imply that workers are implemented.
 
 ## Target MVP structure
 

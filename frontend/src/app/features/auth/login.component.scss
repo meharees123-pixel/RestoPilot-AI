@@ -67,3 +67,53 @@ form {
   margin: 0;
   color: #b42318;
 }
+
+.login-mode-switch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.25rem;
+  margin-top: 1.5rem;
+  padding: 0.25rem;
+  border-radius: 0.65rem;
+  background: #edf2ee;
+}
+
+.login-mode-switch button,
+.text-button {
+  border: 0;
+  background: transparent;
+  color: #536157;
+  font: inherit;
+  cursor: pointer;
+}
+
+.login-mode-switch button {
+  min-height: 2.5rem;
+  border-radius: 0.45rem;
+  font-size: 0.8rem;
+}
+
+.login-mode-switch button.selected {
+  background: white;
+  color: #146b42;
+  box-shadow: 0 1px 3px rgb(22 46 31 / 12%);
+  font-weight: 700;
+}
+
+.otp-notice {
+  color: #516056;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.text-button {
+  justify-self: center;
+  padding: 0.5rem;
+  color: #16794b;
+  font-size: 0.85rem;
+}
+
+.text-button:disabled {
+  color: #89968d;
+  cursor: wait;
+}

@@ -40,20 +40,36 @@ The API listens on port 3000 by default, Swagger is at `/docs`, and the database
 is at `/api/v1/health`. Add allowed browser origins to `CORS_ORIGINS` as a comma-separated list.
 Do not use the example secrets in a deployed environment.
 
-To provision the initial restaurant owner, set the `SEED_*` values and run `npm run seed:owner`
-once against the target database. Treat `SEED_OWNER_PASSWORD` as a secret and remove it from the
-environment after seeding. Login is at `POST /api/v1/auth/login`; refresh tokens rotate at
-`POST /api/v1/auth/refresh`.
+Restaurant users sign in with a WhatsApp OTP; only `SUPER_ADMIN` can use email/password, and that
+login also requires a time-based MFA code. Configure the WhatsApp Cloud API credentials and an
+approved OTP template whose body includes one `{{1}}` parameter. Set `WHATSAPP_OTP_TEMPLATE_NAME`
+to its name and `WHATSAPP_OTP_TEMPLATE_LANGUAGE` to its language.
 
-In production, build the backend first, then run `npm run db:indexes` before deploying application
-instances. It creates declared indexes without dropping existing indexes; schema auto-indexing is
-disabled in production. Configure `MONGODB_DATABASE=RestoPilot` for the API, owner-seeding command
-and index-creation command so they all use the same database.
+For inbound messages, configure Meta's webhook callback as
+`https://<public-api-host>/api/v1/webhooks/whatsapp` and use `WHATSAPP_VERIFY_TOKEN` as the
+verification token. Set `WHATSAPP_APP_SECRET` in production so webhook signatures are verified.
+New inbound text messages are stored and receive a fixed welcome reply; status notifications are
+acknowledged without a reply.
+
+To bootstrap the technical administrator, configure `SEED_SUPER_ADMIN_*` and run
+`npm run seed:super-admin` from `backend`. Add the configured Base32 MFA secret to an authenticator
+app and keep it in a secrets manager. For the first restaurant, configure `SEED_RESTAURANT_*`,
+`SEED_WHATSAPP_NUMBER`, and `SEED_OWNER_FIRST_NAME`, `SEED_OWNER_LAST_NAME`, and
+`SEED_OWNER_PHONE_NUMBER`, then run `npm run seed:owner`. The owner is invited and must verify the
+WhatsApp code before signing in. If `SEED_OWNER_EMAIL` matches a legacy owner, the script migrates
+that account to WhatsApp sign-in and removes its password hash. Restaurant sign-in uses
+`POST /api/v1/auth/request-otp` and `POST /api/v1/auth/verify-otp`; super-admin login uses
+`POST /api/v1/auth/login` with email, password, and MFA code. Both flows use
+`POST /api/v1/auth/refresh` to rotate refresh tokens.
+
+Run `npm run db:indexes` before restarting against an existing database. It migrates the former
+unique email index to a partial unique index so restaurant users can omit email, then creates the
+declared indexes. Configure `MONGODB_DATABASE=RestoPilot` for the API, seeders and index command.
 
 ## Web portal
 
-The Angular 20 portal currently provides sign-in, session refresh, a responsive overview dashboard,
-recent orders/branches, and a light/dark theme. Start it with:
+The Angular 20 portal provides WhatsApp OTP sign-in for restaurant users, MFA sign-in for super
+administrators, and separate guarded business and technical administration areas. Start it with:
 
 ```powershell
 cd frontend
@@ -66,15 +82,15 @@ on port 8080 and proxies `/api` to the backend.
 
 ## Implementation status
 
-The current backend slice includes application bootstrap, Swagger, health/readiness, Mongo
-connection configuration, owner provisioning, JWT access/refresh authentication, and guarded
-tenant-scoped branch, menu, customer and order operations. Unit tests cover tenant isolation,
-order totals and state transitions. The Angular app has sign-in and an overview shell; feature pages
-remain incomplete.
+The current backend slice includes WhatsApp OTP, super-admin MFA, invited owner provisioning,
+platform restaurant/user endpoints, access audit logging and review, JWT access/refresh
+authentication, and tenant/branch-scoped business operations. Campaigns, reservations,
+subscriptions, analytics, queue monitoring and provider dashboards remain unimplemented.
 
-The target architecture is not yet a running agentic system: WhatsApp integration, AI providers and
+The target architecture is not yet a running agentic system: WhatsApp ordering, AI providers and
 orchestration, agent tools, BullMQ workers, voice processing, knowledge retrieval, long-term memory,
-agent audits, reservations, campaigns, password recovery and analytics remain implementation work.
+agent action audits, reservations, campaigns and analytics remain implementation work. Restaurant
+password recovery is intentionally not provided; restaurant users authenticate with WhatsApp OTP.
 Redis is configured for local development and BullMQ is listed as a backend dependency, but queue
 processors are not wired. Order tax, discounts, delivery charges and online payment capture are not
 configured in this MVP slice. The local Compose stack is for development only.

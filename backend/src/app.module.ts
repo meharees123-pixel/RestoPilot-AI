@@ -8,6 +8,9 @@ import { MenuModule } from "./modules/menu/menu.module";
 import { CustomerModule } from "./modules/customer/customer.module";
 import { OrderModule } from "./modules/order/order.module";
 import { TenantModule } from "./modules/tenant/tenant.module";
+import { PlatformModule } from "./modules/platform/platform.module";
+import { AuditModule } from "./modules/audit/audit.module";
+import { WhatsappModule } from "./modules/whatsapp/whatsapp.module";
 
 @Module({
   imports: [
@@ -32,6 +35,9 @@ import { TenantModule } from "./modules/tenant/tenant.module";
     MenuModule,
     CustomerModule,
     OrderModule,
+    PlatformModule,
+    AuditModule,
+    WhatsappModule,
   ],
 })
 export class AppModule {}

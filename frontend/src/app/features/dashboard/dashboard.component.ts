@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { TitleCasePipe } from '@angular/common';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { AuthService } from '../../core/auth/auth.service';
 import { ThemeService } from '../../core/theme.service';
@@ -41,19 +43,29 @@ interface ActivityItem {
   time: string;
 }
 
+type WorkspacePage = 'overview' | 'orders' | 'customers' | 'menu';
+
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, TitleCasePipe],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
 })
 export class DashboardComponent implements OnInit {
   private readonly http = inject(HttpClient);
   private readonly auth = inject(AuthService);
+  private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   readonly theme = inject(ThemeService);
+  private readonly queryParams = toSignal(this.route.queryParamMap, {
+    initialValue: this.route.snapshot.queryParamMap,
+  });
 
+  readonly selectedPage = computed<WorkspacePage>(() => {
+    const page = this.queryParams().get('page');
+    return page === 'orders' || page === 'customers' || page === 'menu' ? page : 'overview';
+  });
   readonly loading = signal(true);
   readonly error = signal('');
   readonly branches = signal<BranchSummary[]>([]);
@@ -86,11 +98,14 @@ export class DashboardComponent implements OnInit {
   );
   readonly recentOrders = computed(() => {
     const query = this.search().trim().toLowerCase();
-    return [...this.orders()]
+    const orders = [...this.orders()]
       .sort((left, right) => Date.parse(right.createdAt) - Date.parse(left.createdAt))
-      .filter((order) => !query || order.orderNumber.toLowerCase().includes(query))
-      .slice(0, 6);
+      .filter((order) => !query || order.orderNumber.toLowerCase().includes(query));
+    return this.selectedPage() === 'orders' ? orders : orders.slice(0, 6);
   });
+  readonly visibleMenuItems = computed(() =>
+    this.selectedPage() === 'menu' ? this.items() : this.items().slice(0, 4),
+  );
   readonly activity = computed<ActivityItem[]>(() =>
     [...this.orders()]
       .sort((left, right) => Date.parse(right.createdAt) - Date.parse(left.createdAt))
@@ -149,6 +164,14 @@ export class DashboardComponent implements OnInit {
     return Number.isNaN(date.getTime())
       ? 'Recently'
       : new Intl.DateTimeFormat('en', { hour: 'numeric', minute: '2-digit' }).format(date);
+  }
+
+  formatDate(value?: string): string {
+    if (!value) return 'No orders yet';
+    const date = new Date(value);
+    return Number.isNaN(date.getTime())
+      ? 'Recently'
+      : new Intl.DateTimeFormat('en-QA', { dateStyle: 'medium' }).format(date);
   }
 
   toggleNotifications(): void {

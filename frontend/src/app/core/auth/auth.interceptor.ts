@@ -7,7 +7,7 @@ import { environment } from '../../../environments/environment';
 export const authInterceptor: HttpInterceptorFn = (request, next) => {
   const auth = inject(AuthService);
   const token = auth.accessToken();
-  const authEndpoint = /\/auth\/(login|refresh)$/.test(request.url);
+  const authEndpoint = /\/auth\/(login|request-otp|verify-otp|refresh)$/.test(request.url);
   if (!token || !request.url.startsWith(environment.apiUrl) || authEndpoint) {
     return next(request);
   }

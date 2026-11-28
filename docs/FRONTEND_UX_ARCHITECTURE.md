@@ -26,8 +26,9 @@ App
 │   ├── Pricing tiers
 │   ├── FaqItemComponent (reusable native disclosure)
 │   └── CTA / footer
-├── LoginComponent (lazy)
-└── Authenticated workspace
+├── LoginComponent (lazy, WhatsApp OTP or super-admin MFA)
+├── PlatformAdminComponent (lazy, super-admin only)
+└── Restaurant workspace (restaurant roles only)
     ├── DashboardComponent (lazy)
 │   ├── Workspace navigation and integration state
 │   ├── KPI strip and AI-preview recommendation
@@ -49,9 +50,10 @@ heading into a component without a reuse or testing benefit.
 | Route | Access | Experience |
 |---|---|---|
 | `/` | Public | Lazy-loaded marketing landing page |
-| `/login` | Public | Invitation-based sign-in |
-| `/dashboard` | `authGuard` | Restaurant overview |
-| `/dashboard/assistant` | `authGuard` | AI copilot preview |
+| `/login` | Public | WhatsApp OTP for restaurant users; email/password/MFA for super admins |
+| `/admin` | `authGuard` + super-admin role guard | Technical platform administration |
+| `/dashboard` | `authGuard` + restaurant role guard | Restaurant overview and business sections |
+| `/dashboard/assistant` | `authGuard` + restaurant role guard | AI copilot preview |
 | Unknown path | Public redirect | Return to landing |
 
 Keep route-level lazy loading. Client-side route guards do not replace API authorization.
@@ -68,6 +70,7 @@ frontend/src/app/
         feature-tile.component.ts
         faq-item.component.ts
     auth/
+    platform-admin/
     dashboard/
       dashboard.component.{ts,html,scss}
       assistant/

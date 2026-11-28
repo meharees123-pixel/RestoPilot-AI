@@ -1,0 +1,146 @@
+<div class="platform-shell">
+  <aside class="platform-sidebar">
+    <a class="platform-brand" routerLink="/" aria-label="RestoPilot AI">
+      <span class="platform-mark">R</span>
+      <span>restopilot <b>AI</b><small>PLATFORM CONTROL</small></span>
+    </a>
+    <span class="platform-nav-label">PLATFORM</span>
+    <nav aria-label="Platform administration">
+      <button type="button" [class.active]="page() === 'overview'" (click)="openPage('overview')">◫ <span>Overview</span></button>
+      <button type="button" [class.active]="page() === 'restaurants'" (click)="openPage('restaurants')">▦ <span>Restaurants</span></button>
+      <button type="button" [class.active]="page() === 'users'" (click)="openPage('users')">♙ <span>Users</span></button>
+      <button type="button" [class.active]="page() === 'logs'" (click)="openPage('logs')">⌁ <span>Access logs</span></button>
+    </nav>
+    <span class="platform-nav-label secondary-label">MONITORING</span>
+    <div class="platform-disabled-nav">
+      <span>Subscriptions</span><span>Revenue analytics</span><span>AI usage</span>
+      <span>Queue monitoring</span><span>Provider monitoring</span><span>WhatsApp numbers</span>
+      <span>Tenant monitoring</span>
+      <small>Additional platform modules are not connected yet.</small>
+    </div>
+    <div class="platform-sidebar-footer">
+      <span class="admin-avatar">SA</span>
+      <span><strong>{{ auth.user()?.firstName }} {{ auth.user()?.lastName }}</strong><small>Super administrator</small></span>
+      <button type="button" aria-label="Sign out" (click)="logout()">↗</button>
+    </div>
+  </aside>
+
+  <main class="platform-main">
+    <header class="platform-topbar">
+      <span>Platform <b>/</b> {{ page() | titlecase }}</span>
+      <span class="admin-badge">SUPER ADMIN · MFA</span>
+    </header>
+    <section class="platform-content">
+      <p class="platform-eyebrow">RESTOPILOT AI · TECHNICAL ADMIN</p>
+      <h1>
+        @switch (page()) {
+          @case ('restaurants') { Restaurants }
+          @case ('users') { Platform users }
+          @case ('logs') { Access logs }
+          @default { Platform overview }
+        }
+      </h1>
+      <p class="platform-subtitle">Manage the platform separately from restaurant operations.</p>
+
+      @if (error()) { <p class="platform-error" role="alert">{{ error() }}</p> }
+      @if (notice()) { <p class="platform-notice" role="status">{{ notice() }}</p> }
+
+      @if (page() === 'overview') {
+        @if (loading()) {
+          <p class="platform-loading" role="status">Loading platform metrics…</p>
+        } @else if (overview(); as metrics) {
+          <div class="platform-metrics">
+            <article><span>Total restaurants</span><strong>{{ metrics.restaurants }}</strong></article>
+            <article><span>Active restaurants</span><strong>{{ metrics.activeRestaurants }}</strong></article>
+            <article><span>Platform users</span><strong>{{ metrics.users }}</strong></article>
+          </div>
+        }
+        <section class="platform-panel">
+          <div class="platform-panel-heading"><div><h2>Recent restaurants</h2><p>Tenant workspaces on the platform</p></div><button type="button" (click)="openPage('restaurants')">Manage restaurants →</button></div>
+          @if (restaurants().length) {
+            <div class="platform-table-wrap">
+              <table><thead><tr><th>RESTAURANT</th><th>STATUS</th><th>PLAN</th></tr></thead>
+                <tbody>
+                  @for (restaurant of restaurants().slice(0, 8); track restaurant._id) {
+                    <tr><td><strong>{{ restaurant.name }}</strong><small>{{ restaurant.slug }}</small></td><td>{{ restaurant.status }}</td><td>{{ restaurant.subscriptionPlan }}</td></tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          } @else {
+            <p class="platform-empty">No restaurants have been provisioned yet.</p>
+          }
+        </section>
+      }
+
+      @if (page() === 'restaurants') {
+        <section class="platform-panel">
+          <div class="platform-panel-heading"><div><h2>Create a restaurant</h2><p>Provision a tenant and invite its first owner.</p></div></div>
+          <form [formGroup]="restaurantForm" (ngSubmit)="createRestaurant()">
+            <label>Restaurant name<input formControlName="name" autocomplete="organization" /></label>
+            <label>Restaurant slug<input formControlName="slug" placeholder="doha-kitchen" /></label>
+            <label>Restaurant WhatsApp number<input formControlName="restaurantWhatsappNumber" placeholder="+97455112233" /></label>
+            <label>Owner first name<input formControlName="ownerFirstName" autocomplete="given-name" /></label>
+            <label>Owner last name<input formControlName="ownerLastName" autocomplete="family-name" /></label>
+            <label>Owner WhatsApp phone<input formControlName="ownerPhoneNumber" placeholder="+97455112233" autocomplete="tel" /></label>
+            <label>Owner email (optional)<input formControlName="ownerEmail" type="email" autocomplete="email" /></label>
+            <button type="submit" [disabled]="busy()">{{ busy() ? 'Creating…' : 'Create and invite owner' }}</button>
+          </form>
+          @if (createdOwnerId()) {
+            <button type="button" class="retry-invite" [disabled]="busy()" (click)="sendInvitation(createdOwnerId())">
+              Retry WhatsApp invitation
+            </button>
+          }
+        </section>
+        <section class="platform-panel">
+          <div class="platform-panel-heading"><div><h2>Restaurants</h2><p>{{ restaurants().length }} tenants</p></div></div>
+          <div class="platform-table-wrap">
+            <table><thead><tr><th>RESTAURANT</th><th>STATUS</th><th>PLAN</th><th>CREATED</th></tr></thead>
+              <tbody>
+                @for (restaurant of restaurants(); track restaurant._id) {
+                  <tr><td><strong>{{ restaurant.name }}</strong><small>{{ restaurant.slug }}</small></td><td>{{ restaurant.status }}</td><td>{{ restaurant.subscriptionPlan }}</td><td>{{ restaurant.createdAt | date:'mediumDate' }}</td></tr>
+                } @empty {
+                  <tr><td colspan="4" class="platform-empty">No restaurants yet.</td></tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </section>
+      }
+
+      @if (page() === 'users') {
+        <section class="platform-panel">
+          <div class="platform-panel-heading"><div><h2>Platform users</h2><p>{{ users().length }} users · personal data visible to super administrators only</p></div></div>
+          <div class="platform-table-wrap">
+            <table><thead><tr><th>NAME</th><th>ROLE</th><th>WHATSAPP</th><th>STATUS</th></tr></thead>
+              <tbody>
+                @for (user of users(); track user._id) {
+                  <tr><td><strong>{{ user.firstName }} {{ user.lastName }}</strong><small>{{ user.email || 'WhatsApp identity' }}</small></td><td>{{ user.role }}</td><td>{{ user.phoneNumber }}</td><td>{{ user.status }}</td></tr>
+                } @empty {
+                  <tr><td colspan="4" class="platform-empty">No users found.</td></tr>
+                }
+
+                @if (page() === 'logs') {
+                  <section class="platform-panel">
+                    <div class="platform-panel-heading"><div><h2>Recent API access</h2><p>Latest 100 requests · request bodies and OTP values are not stored</p></div></div>
+                    <div class="platform-table-wrap">
+                      <table><thead><tr><th>TIME</th><th>ACTOR</th><th>ROLE</th><th>REQUEST</th><th>STATUS</th></tr></thead>
+                        <tbody>
+                          @for (entry of accessAudits(); track entry._id) {
+                            <tr><td>{{ entry.occurredAt | date:'medium' }}</td><td>{{ entry.userId || 'Unauthenticated' }}</td><td>{{ entry.role || '—' }}</td><td>{{ entry.method }} {{ entry.path }}</td><td>{{ entry.statusCode }}</td></tr>
+                          } @empty {
+                            <tr><td colspan="5" class="platform-empty">No access logs recorded yet.</td></tr>
+                          }
+                        </tbody>
+                      </table>
+                    </div>
+                  </section>
+                }
+              </tbody>
+            </table>
+          </div>
+        </section>
+      }
+    </section>
+  </main>
+</div>

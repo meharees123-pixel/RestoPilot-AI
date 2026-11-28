@@ -7,6 +7,7 @@ import {
 import { JwtService } from "@nestjs/jwt";
 import { Request } from "express";
 import { AccessTokenClaims } from "./auth.service";
+import { UserRole } from "./user.schema";
 
 export interface AuthenticatedRequest extends Request {
   user: AccessTokenClaims;
@@ -29,7 +30,18 @@ export class JwtAuthGuard implements CanActivate {
       throw new UnauthorizedException("Invalid or expired access token");
     }
 
-    if (!request.user.sub || !request.user.role) {
+    const businessUser = [
+      UserRole.RESTAURANT_OWNER,
+      UserRole.RESTAURANT_MANAGER,
+      UserRole.BRANCH_MANAGER,
+    ].includes(request.user.role);
+    if (
+      !request.user.sub ||
+      !Object.values(UserRole).includes(request.user.role) ||
+      !Array.isArray(request.user.branchIds) ||
+      (businessUser && !request.user.restaurantId) ||
+      (request.user.role === UserRole.SUPER_ADMIN && request.user.restaurantId !== null)
+    ) {
       throw new UnauthorizedException("Invalid access token claims");
     }
     return true;

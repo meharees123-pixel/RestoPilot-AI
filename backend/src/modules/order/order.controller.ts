@@ -13,7 +13,7 @@ import { OrderService } from "./order.service";
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, TenantContextGuard, RolesGuard)
 @Controller("orders")
-@Roles(UserRole.OWNER, UserRole.MANAGER, UserRole.BRANCH_MANAGER)
+@Roles(UserRole.RESTAURANT_OWNER, UserRole.RESTAURANT_MANAGER, UserRole.BRANCH_MANAGER)
 export class OrderController {
   constructor(private readonly orders: OrderService) {}
 

@@ -12,16 +12,17 @@ import { CustomerService } from "./customer.service";
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, TenantContextGuard, RolesGuard)
 @Controller("customers")
-@Roles(UserRole.OWNER, UserRole.MANAGER)
+@Roles(UserRole.RESTAURANT_OWNER, UserRole.RESTAURANT_MANAGER, UserRole.BRANCH_MANAGER)
 export class CustomerController {
   constructor(private readonly customers: CustomerService) {}
 
   @Get()
   list(@Req() request: AuthenticatedRequest) {
-    return this.customers.list(request.user.restaurantId!);
+    return this.customers.list(request.user);
   }
 
   @Post()
+  @Roles(UserRole.RESTAURANT_OWNER, UserRole.RESTAURANT_MANAGER)
   create(@Req() request: AuthenticatedRequest, @Body() dto: CreateCustomerDto) {
     return this.customers.create(request.user.restaurantId!, dto);
   }

@@ -1,13 +1,26 @@
 const mongoose = require("mongoose");
+const path = require("node:path");
 
-const { Restaurant, RestaurantSchema } = require("../dist/modules/tenant/schemas/restaurant.schema");
-const { User, UserSchema } = require("../dist/modules/auth/user.schema");
-const { Branch, BranchSchema } = require("../dist/modules/branch/schemas/branch.schema");
-const { Category, CategorySchema } = require("../dist/modules/menu/schemas/category.schema");
-const { MenuItem, MenuItemSchema } = require("../dist/modules/menu/schemas/menu-item.schema");
-const { Customer, CustomerSchema } = require("../dist/modules/customer/customer.schema");
-const { Order, OrderSchema } = require("../dist/modules/order/order.schema");
-const { OrderCounter, OrderCounterSchema } = require("../dist/modules/order/order-counter.schema");
+try {
+  process.loadEnvFile(path.resolve(__dirname, "../../.env"));
+} catch (error) {
+  if (!error || typeof error !== "object" || error.code !== "ENOENT") throw error;
+}
+
+const { Restaurant, RestaurantSchema } = require("../dist/src/modules/tenant/schemas/restaurant.schema");
+const { User, UserSchema } = require("../dist/src/modules/auth/user.schema");
+const { Branch, BranchSchema } = require("../dist/src/modules/branch/schemas/branch.schema");
+const { Category, CategorySchema } = require("../dist/src/modules/menu/schemas/category.schema");
+const { MenuItem, MenuItemSchema } = require("../dist/src/modules/menu/schemas/menu-item.schema");
+const { Customer, CustomerSchema } = require("../dist/src/modules/customer/customer.schema");
+const { Order, OrderSchema } = require("../dist/src/modules/order/order.schema");
+const { OrderCounter, OrderCounterSchema } = require("../dist/src/modules/order/order-counter.schema");
+const { OtpChallenge, OtpChallengeSchema } = require("../dist/src/modules/auth/otp-challenge.schema");
+const { AccessAudit, AccessAuditSchema } = require("../dist/src/modules/audit/access-audit.schema");
+const {
+  WhatsappMessage,
+  WhatsappMessageSchema,
+} = require("../dist/src/modules/whatsapp/schemas/whatsapp-message.schema");
 const definitions = [
   [Restaurant.name, RestaurantSchema],
   [User.name, UserSchema],
@@ -17,6 +30,9 @@ const definitions = [
   [Customer.name, CustomerSchema],
   [Order.name, OrderSchema],
   [OrderCounter.name, OrderCounterSchema],
+  [OtpChallenge.name, OtpChallengeSchema],
+  [AccessAudit.name, AccessAuditSchema],
+  [WhatsappMessage.name, WhatsappMessageSchema],
 ];
 
 async function createIndexes() {
@@ -29,6 +45,12 @@ async function createIndexes() {
   });
   try {
     const models = definitions.map(([name, schema]) => mongoose.model(name, schema));
+    const userModel = models.find((model) => model.modelName === User.name);
+    const indexes = await userModel.collection.indexes();
+    const legacyEmailIndex = indexes.find(
+      (index) => index.key.email === 1 && index.unique && !index.partialFilterExpression,
+    );
+    if (legacyEmailIndex) await userModel.collection.dropIndex(legacyEmailIndex.name);
     await Promise.all(models.map((model) => model.createIndexes()));
     process.stdout.write(`Ensured indexes for ${models.length} collections\n`);
   } finally {

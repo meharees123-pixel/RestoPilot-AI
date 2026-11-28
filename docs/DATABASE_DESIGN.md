@@ -9,7 +9,8 @@ Indexes begin with `restaurantId` for tenant isolation. A compound unique index 
 tenant and within tenant duplicates.
 
 Production schema auto-indexing is disabled. Run the backend `db:indexes` command during deployment
-to create declared indexes; it does not drop existing indexes.
+to create declared indexes. The command replaces the legacy users email index with a partial unique
+index so WhatsApp-only users may omit email.
 
 ## Restaurant
 
@@ -136,7 +137,15 @@ renames do not silently create parallel collections.
 Existing tenant-owned business records:
 
 - `Customer`: restaurantId, WhatsApp number, spend and tags
-- `User`: restaurantId nullable for platform admin, roles and permissions
+- `User`: phoneNumber (unique), optional email, names, role, status, lastLoginAt, WhatsApp
+  verification, optional super-admin password/MFA secrets and restaurant/branch assignments
+- `OtpChallenge`: phoneNumber, HMAC OTP hash, five-minute expiry, attempt and resend counters
+- `AccessAudit`: userId, restaurantId, role, method, route, HTTP status and timestamp; request bodies
+  and OTP values are not stored
+
+User roles are `SUPER_ADMIN`, `RESTAURANT_OWNER`, `RESTAURANT_MANAGER` and `BRANCH_MANAGER`.
+Restaurant users have no password credential. Super-admin password and MFA secret fields are
+excluded from ordinary schema queries.
 
 Other product collections such as loyalty accounts, rewards, campaigns and audit logs are future
 work. The agentic MVP adds the following tenant-scoped collections:

@@ -17,19 +17,19 @@ export class BranchController {
   constructor(private readonly branches: BranchService) {}
 
   @Get()
-  @Roles(UserRole.OWNER, UserRole.MANAGER, UserRole.BRANCH_MANAGER)
+  @Roles(UserRole.RESTAURANT_OWNER, UserRole.RESTAURANT_MANAGER, UserRole.BRANCH_MANAGER)
   list(@Req() request: AuthenticatedRequest) {
     return this.branches.list(request.user);
   }
 
   @Post()
-  @Roles(UserRole.OWNER, UserRole.MANAGER)
+  @Roles(UserRole.RESTAURANT_OWNER, UserRole.RESTAURANT_MANAGER)
   create(@Req() request: AuthenticatedRequest, @Body() dto: CreateBranchDto) {
     return this.branches.create(request.user, dto);
   }
 
   @Patch(":id/status")
-  @Roles(UserRole.OWNER, UserRole.MANAGER, UserRole.BRANCH_MANAGER)
+  @Roles(UserRole.RESTAURANT_OWNER, UserRole.RESTAURANT_MANAGER, UserRole.BRANCH_MANAGER)
   updateStatus(
     @Req() request: AuthenticatedRequest,
     @Param("id", ParseObjectIdPipe) id: string,

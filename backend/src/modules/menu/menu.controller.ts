@@ -17,31 +17,31 @@ export class MenuController {
   constructor(private readonly menu: MenuService) {}
 
   @Get("categories")
-  @Roles(UserRole.OWNER, UserRole.MANAGER, UserRole.BRANCH_MANAGER)
+  @Roles(UserRole.RESTAURANT_OWNER, UserRole.RESTAURANT_MANAGER, UserRole.BRANCH_MANAGER)
   listCategories(@Req() request: AuthenticatedRequest) {
     return this.menu.listCategories(request.user.restaurantId!);
   }
 
   @Post("categories")
-  @Roles(UserRole.OWNER, UserRole.MANAGER)
+  @Roles(UserRole.RESTAURANT_OWNER, UserRole.RESTAURANT_MANAGER)
   createCategory(@Req() request: AuthenticatedRequest, @Body() dto: CreateCategoryDto) {
     return this.menu.createCategory(request.user.restaurantId!, dto);
   }
 
   @Get("items")
-  @Roles(UserRole.OWNER, UserRole.MANAGER, UserRole.BRANCH_MANAGER)
+  @Roles(UserRole.RESTAURANT_OWNER, UserRole.RESTAURANT_MANAGER, UserRole.BRANCH_MANAGER)
   listItems(@Req() request: AuthenticatedRequest, @Query("branchId") branchId?: string) {
     return this.menu.listItems(request.user, branchId);
   }
 
   @Post("items")
-  @Roles(UserRole.OWNER, UserRole.MANAGER, UserRole.BRANCH_MANAGER)
+  @Roles(UserRole.RESTAURANT_OWNER, UserRole.RESTAURANT_MANAGER, UserRole.BRANCH_MANAGER)
   createItem(@Req() request: AuthenticatedRequest, @Body() dto: CreateMenuItemDto) {
     return this.menu.createItem(request.user, dto);
   }
 
   @Patch("items/:id/availability")
-  @Roles(UserRole.OWNER, UserRole.MANAGER, UserRole.BRANCH_MANAGER)
+  @Roles(UserRole.RESTAURANT_OWNER, UserRole.RESTAURANT_MANAGER, UserRole.BRANCH_MANAGER)
   setAvailability(
     @Req() request: AuthenticatedRequest,
     @Param("id", ParseObjectIdPipe) id: string,
